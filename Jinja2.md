@@ -461,4 +461,90 @@ roles/apacheconf/
 └── vars
   └── main.yml
 ```
+### Ansible Galaxy
+Galaxy 可以下载Ansible官方Roles和collections,允许从ansible官方下载,创建,分享,管理
+
+集合可以包含多个角色（Roles）、模块（Modules）、插件（Plugins）、剧本（Playbooks）、和文档（Documentation）等
+
+集合的优势
+模块化：集合将 Ansible 的功能打包成独立的单元，便于管理和复用。
+易于分享：开发者可以将集合发布到 Ansible Galaxy 或其他平台，方便他人下载和使用。
+版本控制：集合有自己的版本控制，可以确保在不同项目中使用特定版本的集合，避免因更新导致的兼容性问题。
+自包含：集合包含了所有必要的依赖，减少了对外部资源的依赖。
+
+Ansible-galaxy命令用法
+默认下载的Roles存放于`/etc/ansible/roles`目录下,可在`/etc/ansible/ansible.cfg`自定义存放目录
+
+```bash
+ansible-galaxy init my_role
+```
+当前目录下创建一个名为 my_role 的目录，并生成角色的标准目录结构，包括 tasks、handlers、files、templates、vars、defaults、meta 等目录和文件
+
+```bash
+ansible-galaxy install geerlingguy.mysql
+Starting galaxy role install process
+- downloading role 'mysql', owned by geerlingguy
+- downloading role from https://github.com/geerlingguy/ansible-role-mysql/archive/4.3.4.tar.gz
+- extracting geerlingguy.mysql to /root/.ansible/roles/geerlingguy.mysql
+- geerlingguy.mysql (4.3.4) was installed successfully
+
+```
+这个命令会将 geerlingguy.mysql 角色下载到本地的 roles 目录中，通常是 `~/.ansible/roles`
+
+```bash
+ansible-galaxy install -r requirements.yml
+```
+如果你有一个 requirements.yml 文件，其中列出了多个角色或集合，你可以使用以下命令来批量安装
+
+删除本地已安装的角色或集合
+```bash
+ansible-galaxy remove geerlingguy.mysql
+
+```
+
+命令用于列出本地安装的所有角色或集合
+
+```bash
+ansible-galaxy list
+```
+在 Ansible Galaxy 上搜索角色或集合
+```bash
+ansible-galaxy search mysql
+```
+发布自己的角色或集合
+
+```bash
+ansible-galaxy import username reponame
+```
+username 是你的 Galaxy 或 GitHub 用户名，reponame 是你的角色或集合所在的仓库名称。
+
+
+```bash
+ansible-galaxy role
+```
+你可以结合其他命令来创建、删除、列表或导出角色
+
+集合是 Ansible 2.9 之后引入的概念，它们是打包的模块、插件和角色的集合
+创建一个新集合
+
+```bash
+ansible-galaxy collection init my_namespace.my_collection
+```
+安装一个集合
+```bash
+ansible-galaxy collection install community.general
+```
+配置你的 Ansible Galaxy 环境，比如设置代理或其他配置参数
+
+```bash
+ansible-galaxy setup --proxy http://proxy.example.com:8080
+```
+
+将本地创建的集合发布到 Ansible Galaxy
+```bash
+ansible-galaxy collection publish path/to/my_collection-1.0.0.tar.gz
+```
+
+[reoles平台](https://galaxy.ansible.com/ui/)
+
 
