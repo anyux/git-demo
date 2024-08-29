@@ -61,7 +61,7 @@ tree ./
 ```bash
 #构建编译环境
 apt-get update
-apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlib1g zlib1g-dev gcc libxml2 libxml2-dev libxslt-dev
+apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlib1g zlib1g-dev gcc libxml2 libxml2-dev libxslt-dev libgd-dev libxml++2.6-dev
 
 #下载源码包
 wget http://nginx.org/download/nginx-1.20.2.tar.gz
@@ -98,13 +98,12 @@ cd nginx-1.20.2
 --with-http_addition_module \
 --with-http_gunzip_module \
 --with-http_gzip_static_module \
---with-http_image_filter_module \
 --with-http_sub_module \
---with-http_xslt_module \
 --with-stream \
 --with-stream_ssl_module \
 --with-mail \
---with-mail_ssl_module
+--with-mail_ssl_module \
+--with-ld-opt='-static'
 
     
 #编译
