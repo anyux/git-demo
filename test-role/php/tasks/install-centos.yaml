@@ -1,0 +1,43 @@
+---
+- name: Ensure Yum Utils is installed
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+
+- name: Install Remi repository
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+  register: remi_key
+
+- name: Install Remi repository package
+  ansible.builtin.yum:
+    name: "{{ remi_repo_url }}"
+    state: present
+
+- name: Enable Remi PHP {{ php_version }} repository
+  ansible.builtin.command:
+    cmd: yum-config-manager --enable remi-php{{ php_version | replace('.', '') }}
+  when: remi_key.changed
+
+
+
+# 用于重启centos上的php-fpm
+- name: Install PHP and its extensions
+  ansible.builtin.yum:
+    name: "{{ php_packages }}"
+    state: present
+    enablerepo: "remi-php74"
+  notify: Restart PHP-FPM
+  environment:
+    http_proxy: "{{ http_proxy }}"
+    https_proxy: "{{ https_proxy }}"
+
+- name: Restart PHP on CentOS 7
+  service:
+    name: "php-fpm.service"
+    state: restarted
+
+
+
+

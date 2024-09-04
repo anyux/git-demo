@@ -1,0 +1,16 @@
+---
+- name: Copy custom php.ini if provided
+  ansible.builtin.template:
+    src: php.ini.j2
+    dest: "{{ php_ini_path }}/php.ini"
+  notify:
+    - Restart PHP-FPM
+  when: false
+
+- name: Copy custom PHP-FPM configuration if provided
+  ansible.builtin.template:
+    src: www.conf.j2
+    dest: "{{ php_fpm_conf_path }}"
+  notify:
+    - Restart PHP-FPM
+  when: false

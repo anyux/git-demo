@@ -1,0 +1,8 @@
+---
+- name: mysql | Ensure MySQL is installed in ubuntu
+  include_tasks: install-ubuntu.yaml
+  when: ansible_distribution == "Ubuntu"
+
+- name: mysql | Ensure MySQL is installed in centos
+  include_tasks: install-centos.yaml
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"

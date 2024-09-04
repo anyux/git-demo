@@ -1,0 +1,2 @@
+http_proxy: "http://192.168.168.1:9000"
+https_proxy: "https://192.168.168.1:9000"

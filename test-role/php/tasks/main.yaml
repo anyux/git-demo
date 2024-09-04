@@ -1,0 +1,13 @@
+---
+# tasks file for php
+- name: php | import install php tasks
+  import_tasks: install.yaml
+  tags:
+    - install-php
+
+- name: php | import config tasks
+  import_tasks: config.yaml
+  tags:
+    - cofnig-php
+
+

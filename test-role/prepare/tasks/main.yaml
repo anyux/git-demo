@@ -1,0 +1,6 @@
+---
+# tasks file for prepare
+- name: prepare | check ssh key
+  import_tasks: check-key.yaml
+- name: nginx | import key yaml
+  import_tasks: copy-key.yaml

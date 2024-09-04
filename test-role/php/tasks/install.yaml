@@ -1,0 +1,29 @@
+---
+- name: php | Ensure PHP is installed in ubuntu
+  include_tasks: install-ubuntu.yaml
+  when: ansible_distribution == "Ubuntu"
+
+- name: php | Ensure PHP is installed in centos
+  include_tasks: install-centos.yaml
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: php | get php_fpm name
+  shell: |
+    /bin/bash -c "systemctl list-units --type=service | grep php | sed 's/^● /  /' | awk '{print \$1}'"
+  register: php_fpm
+
+- name: php | debug php_fpm name
+  debug:
+    msg: "{{ php_fpm.stdout }}"
+
+- name: php | debug php_fpm name
+  command: "systemctl is-active {{ php_fpm.stdout }}"
+  register: php_fpm_status
+
+- name: php | debug php_fpm name
+  debug:
+    msg: "{{ php_fpm.stdout }} status is: {{ php_fpm_status.stdout }}"
+  when: php_fpm_status.stdout == "active"
+
+
+

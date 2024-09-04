@@ -1,0 +1,22 @@
+---
+- name: 检查私钥是否存在
+  stat:
+    path: /root/.ssh/id_rsa
+  register: key_stat
+  delegate_to: localhost
+
+- name: 如果私钥不存在，则生成私钥
+  openssl_privatekey:
+    path: /root/.ssh/id_rsa
+    type: RSA
+    size: 2048
+  when: key_stat.stat.exists == False
+  delegate_to: localhost
+
+- name: 如果私钥不存在，则从私钥生成公钥
+  openssl_publickey:
+    path: /root/.ssh/id_rsa.pub
+    privatekey_path: /root/.ssh/id_rsa
+  when: key_stat.stat.exists == False
+  delegate_to: localhost
+

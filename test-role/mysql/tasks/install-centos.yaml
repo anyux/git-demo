@@ -1,0 +1,79 @@
+---
+- name: mysql | get MariaDB name
+  shell: "rpm -qa|grep mariadb"
+  register: mariadb
+  ignore_errors: yes
+  tags: remove-mariadb
+
+- name: mysql | remove MariaDB
+  command: "rpm -e --nodeps {{ item }}"
+  loop: "{{ mariadb.stdout_lines }}"
+  when: mariadb is defined
+  tags: remove-mariadb
+
+- name: mysql | check remove MariaDB
+  shell: "rpm -qa|grep {{ item }}"
+  register: remove
+  loop: "{{ mariadb.stdout_lines }}"
+  when: mariadb is defined
+  ignore_errors: yes
+  tags: remove-mariadb
+
+- name: mysql | debug remove MariaDB result
+  debug:
+    msg: "{{ remove }}"
+  loop: "{{ remove.stdout_lines | default([]) }}"
+  when: remove.stdout_lines is defined
+  tags: remove-mariadb
+
+- block:
+    - name: mysql | Ensure MySQL Yum repository is added
+      get_url:
+        url: "{{ centos_mysql_repo }}"
+        dest: "/tmp/centos_mysql_local_repo"
+        headers:
+          User-Agent: "{{ user_agent }}"
+  rescue:
+    - name: mysql | Ensure MySQL Yum repository is added by proxy
+      ansible.builtin.yum:
+        name: "wget"
+        state: present
+    - name: mysql | Ensure MySQL Yum repository is added by proxy
+      shell: "wget -O /tmp/{{ centos_mysql_local_repo }} {{ centos_mysql_repo }}"
+      environment:
+        http_proxy: "{{ http_proxy }}"
+        https_proxy: "{{ https_proxy }}"
+      ignore_errors: yes
+  always:
+    - name: mysql | Ensure MySQL Yum repository is added by proxy
+      ansible.builtin.yum:
+        name: "/tmp/{{ centos_mysql_local_repo }}"
+        state: present
+    - name: mysql | check MySQL Yum repository is added
+      shell: "yum repolist | grep mysql | grep community"
+      register: yum_repolist
+    - name: mysql | check MySQL  was successful
+      fail:
+        msg: "install {{ centos_mysql_repo }} failed"
+      when: mysql not in yum_repolist.stdout
+
+- name: mysql | Install MySQL 8.0
+  ansible.builtin.yum:
+    name: "{{ centos_mysql }}"
+    state: present
+    disable_gpg_check: yes
+
+- name: mysql | Start MySQL service
+  systemd:
+    name: "{{ centos_mysql_service }}"
+    state: started
+    enabled: yes
+
+- name: mysql | Get temporary MySQL root password
+  shell: "grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'"
+  register: mysql_temp_password
+  ignore_errors: yes
+
+- name: Secure MySQL installation
+  debug:
+    msg: "mysql password is :{{ mysql_temp_password.stdout }}"

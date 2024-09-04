@@ -1,0 +1,62 @@
+---
+- name: Add Nginx repository on Ubuntu
+  apt_repository:
+    repo: 'ppa:nginx/stable'
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Nginx signing key on Ubuntu
+  apt_key:
+    url: "https://nginx.org/keys/nginx_signing.key"
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Nginx repository for Ubuntu
+  copy:
+    content: |
+      deb http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
+      deb-src http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
+    dest: /etc/apt/sources.list.d/nginx.list
+  when: ansible_distribution == "Ubuntu"
+
+- name: Update apt cache on Ubuntu
+  apt:
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Nginx repository on CentOS 7
+  yum_repository:
+    name: nginx
+    description: Nginx.org Repository
+    baseurl: http://nginx.org/packages/centos/$releasever/$basearch/
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://nginx.org/keys/nginx_signing.key
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: Install epel on CentOS 7
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: Install Nginx on CentOS 7
+  yum:
+    name: nginx
+    state: present
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+
+- name: Install Nginx on Ubuntu
+  apt:
+    name: nginx
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  notify: Restart Nginx
+

@@ -1,0 +1,11 @@
+---
+# tasks file for mysql
+- name: mysql | import install mysql tasks
+  import_tasks: install.yaml
+  tags:
+    - install-mysql
+
+- name: mysql | import config tasks
+  import_tasks: config.yaml
+  tags:
+    - cofnig-mysql

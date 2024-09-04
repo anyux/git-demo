@@ -1,0 +1,8 @@
+---
+- name: php config | import task config-centos
+  import_tasks: config-centos.yaml
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: php config | import task config-ubuntu
+  import_tasks: config-centos.yaml
+  when: ansible_distribution == "Ubuntu"

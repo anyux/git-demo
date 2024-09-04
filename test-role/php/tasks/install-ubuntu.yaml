@@ -1,0 +1,11 @@
+---
+- name: Ensure PHP is installed
+  ansible.builtin.yum:
+    name: "{{ php_packages }}"
+    state: present
+
+- name: Ensure PHP-FPM service is enabled and started
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm.service"
+    enabled: yes
+    state: started

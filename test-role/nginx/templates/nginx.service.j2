@@ -1,0 +1,18 @@
+[Unit]
+Description={{ nginx_service_description }}
+After=network.target
+
+[Service]
+Type=forking
+PIDFile={{nginx_path}}/logs/nginx.pid
+ExecStartPre={{nginx_path}}/sbin/nginx  -t -q -g 'daemon on; master_process on;'
+ExecStart={{nginx_path}}/sbin/nginx -g 'daemon on; master_process on;'
+ExecReload={{nginx_path}}/sbin/nginx -g 'daemon on; master_process on;' -s reload
+#ExecStop=-/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile {{nginx_path}}/logs/nginx.pid
+ExecStop={{nginx_path}}/sbin/nginx -s quiet
+TimeoutStopSec=30s
+KillMode=process
+
+
+[Install]
+WantedBy=multi-user.target

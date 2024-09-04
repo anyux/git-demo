@@ -1,0 +1,10 @@
+---
+# vars file for nginx
+nginx_conf: "/etc/nginx"
+nginx_log: "/var/log/nginx"
+nginx_version: "1.20"
+nginx_user: "root"
+nginx_group: "root"
+worker_processes: "4"
+listen_port: "80"
+server_name: "localhost"

@@ -1,0 +1,13 @@
+---
+# defaults file for php
+php_packages:
+  - php
+  - php-cli
+  - php-fpm
+  - php-mysqlnd
+  - php-xml
+  - php-mbstring
+  - php-curl
+  - php-json
+
+

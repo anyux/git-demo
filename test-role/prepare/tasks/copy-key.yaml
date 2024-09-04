@@ -1,0 +1,10 @@
+---
+- name: Manage authorized keys
+  ansible.builtin.authorized_key:
+    user: "root"
+    state: "present"
+    key: "{{ lookup('file','/root/.ssh/id_rsa.pub') }}"
+    key_options: "no-port-forwarding,no-agent-forwarding"
+    path: "/root/.ssh/authorized_keys"
+- name:  gather facts
+  setup:

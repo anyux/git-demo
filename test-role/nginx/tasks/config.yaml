@@ -1,0 +1,24 @@
+---
+- name: nginx | nginx template conf file
+  template:
+    src: nginx.conf.j2
+    dest: "{{ nginx_conf }}/nginx.conf"
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart Nginx
+
+- name: Check if Nginx is running
+  shell: systemctl is-active nginx
+  register: nginx_status
+  ignore_errors: yes
+
+- name: Print Nginx service status
+  debug:
+    msg: "Nginx is {{ nginx_status.stdout }} on {{ inventory_hostname }}"
+  when: nginx_status.rc == 0
+
+- name: Handle Nginx not running
+  debug:
+    msg: "Nginx is not running on {{ inventory_hostname }}"
+  when: nginx_status.rc != 0
